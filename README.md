@@ -179,7 +179,7 @@ GET https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/
 
 GET https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/
 
-GET https://api.steampowered.com/ISteamUser/GetFriendList/v0001/
+GET https://api.steampowered.com/ISteamUser/GetFriendList/v1/
 
 GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/
 
@@ -220,7 +220,32 @@ PATCH https://discord.com/api/v9/applications/{APP_ID}/users/{USER_ID}/identitie
       {
         "type": 1,
         "name": "steam_number_games",
-        "value": "312"
+        "value": "62"
+      },
+      {
+        "type": 1,
+        "name": "steam_total_playtime",
+        "value": "469h"
+      },
+      {
+        "type": 1,
+        "name": "steam_total_playtime_2week",
+        "value": "18h"
+      },
+      {
+        "type": 1,
+        "name": "steam_member_since",
+        "value": "2018"
+      },
+      {
+        "type": 1,
+        "name": "steam_recently_played",
+        "value": "THE FINALS"
+      },
+      {
+        "type": 1,
+        "name": "steam_friends",
+        "value": "31"
       }
     ]
   }
