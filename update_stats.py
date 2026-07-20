@@ -1,12 +1,12 @@
 import os
-import logging
 import requests
+import logging
+from datetime import datetime
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-# Configuration
 CONFIG = {
     "STEAM_API_KEY": os.environ.get("STEAM_API_KEY"),
     "STEAM_USER_ID": os.environ.get("STEAM_USER_ID"),
@@ -15,55 +15,51 @@ CONFIG = {
     "DISCORD_APP_ID": os.environ.get("DISCORD_APP_ID"),
 }
 
-BASE_URL = "https://api.steampowered.com"
-
-
-def fetch_steam_data():
-    """Fetch all Steam API data."""
-
-    key = CONFIG["STEAM_API_KEY"]
-    steam_id = CONFIG["STEAM_USER_ID"]
-
-    endpoints = {
-        "user": f"{BASE_URL}/ISteamUser/GetPlayerSummaries/v0002/?steamids={steam_id}&key={key}",
-        "level": f"{BASE_URL}/IPlayerService/GetSteamLevel/v0001/?steamid={steam_id}&key={key}",
-        "friends": f"{BASE_URL}/ISteamUser/GetFriendList/v0001/?steamid={steam_id}&relationship=friend&key={key}",
-        "games": f"{BASE_URL}/IPlayerService/GetOwnedGames/v0001/?steamid={steam_id}&include_appinfo=true&include_played_free_games=true&key={key}",
-        "recent": f"{BASE_URL}/IPlayerService/GetRecentlyPlayedGames/v0001/?steamid={steam_id}&key={key}",
-    }
-
-    data = {}
-
-    try:
-        for name, url in endpoints.items():
-            response = requests.get(url, timeout=10)
-            response.raise_for_status()
-
-            result = response.json()
-
-            if "response" in result:
-                data[name] = result["response"]
-            else:
-                data[name] = result
-
-        return data
-
-    except Exception as e:
-        logger.error(f"Steam API error: {e}")
-        return None
-
 
 def update_discord_widget():
-    steam = fetch_steam_data()
+    base_url = "https://api.steampowered.com"
+    key = CONFIG["STEAM_API_KEY"]
+    steamid = CONFIG["STEAM_USER_ID"]
 
-    if not steam:
+    try:
+        # Player Summary
+        user_resp = requests.get(
+            f"{base_url}/ISteamUser/GetPlayerSummaries/v0002/?steamids={steamid}&key={key}",
+            timeout=10,
+        )
+        user = user_resp.json()["response"]["players"][0]
+
+        # Steam Level
+        level_resp = requests.get(
+            f"{base_url}/IPlayerService/GetSteamLevel/v1/?steamid={steamid}&key={key}",
+            timeout=10,
+        )
+        level = str(level_resp.json()["response"]["player_level"])
+
+        # Owned Games
+        games_resp = requests.get(
+            f"{base_url}/IPlayerService/GetOwnedGames/v1/?steamid={steamid}&include_appinfo=1&include_played_free_games=1&key={key}",
+            timeout=10,
+        )
+        games = games_resp.json()["response"]
+
+        # Recently Played
+        recent_resp = requests.get(
+            f"{base_url}/IPlayerService/GetRecentlyPlayedGames/v1/?steamid={steamid}&key={key}",
+            timeout=10,
+        )
+        recent = recent_resp.json()["response"]
+
+        # Friends
+        friends_resp = requests.get(
+            f"{base_url}/ISteamUser/GetFriendList/v1/?steamid={steamid}&relationship=friend&key={key}",
+            timeout=10,
+        )
+        friends = friends_resp.json()
+
+    except Exception as e:
+        logger.error(f"Steam API failure: {e}")
         return
-
-    user = steam["user"]["players"][0]
-    level = steam["level"]
-    friends = steam["friends"]
-    games = steam["games"]
-    recent = steam["recent"]
 
     total_playtime = sum(
         game.get("playtime_forever", 0)
@@ -75,7 +71,23 @@ def update_discord_widget():
         for game in recent.get("games", [])
     )
 
+    recent_games = recent.get("games", [])
+
+    recent_game = (
+        recent_games[0]["name"]
+        if recent_games
+        else "None"
+    )
+
     vanity = user["profileurl"].rstrip("/").split("/")[-1]
+
+    member_since = str(
+        datetime.utcfromtimestamp(user["timecreated"]).year
+    )
+
+    friend_count = len(
+        friends.get("friendslist", {}).get("friends", [])
+    )
 
     payload = {
         "data": {
@@ -100,7 +112,7 @@ def update_discord_widget():
                 {
                     "type": 1,
                     "name": "steam_level",
-                    "value": str(level["player_level"])
+                    "value": level
                 },
                 {
                     "type": 1,
@@ -120,28 +132,17 @@ def update_discord_widget():
                 {
                     "type": 1,
                     "name": "steam_member_since",
-                    "value": str(
-                        __import__("datetime")
-                        .datetime.utcfromtimestamp(user["timecreated"])
-                        .year
-                    )
+                    "value": member_since
                 },
                 {
                     "type": 1,
                     "name": "steam_recently_played",
-                    "value": (
-                        recent.get("games", [{}])[0].get("name", "None")
-                    )
+                    "value": recent_game
                 },
                 {
                     "type": 1,
                     "name": "steam_friends",
-                    "value": str(
-                        len(
-                            friends.get("friendslist", {})
-                            .get("friends", [])
-                        )
-                    )
+                    "value": str(friend_count)
                 }
             ]
         }
@@ -158,12 +159,15 @@ def update_discord_widget():
         "Content-Type": "application/json",
     }
 
-    response = requests.patch(url, headers=headers, json=payload, timeout=10)
+    response = requests.patch(
+        url,
+        headers=headers,
+        json=payload,
+        timeout=10,
+    )
 
-    if response.status_code in (200, 204):
-        logger.info("Successfully synced to Discord!")
-    else:
-        logger.error(f"Discord API error: {response.text}")
+    logger.info(f"Discord Status: {response.status_code}")
+    logger.info(response.text)
 
 
 if __name__ == "__main__":
