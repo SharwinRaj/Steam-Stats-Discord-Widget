@@ -10,10 +10,10 @@ Automatically synchronize your public **Steam** profile statistics with Discord'
 
 ---
 
-![GitHub stars](https://img.shields.io/github/stars/SharwinRaj/Steam-Stats?style=for-the-badge)
-![License](https://img.shields.io/github/license/SharwinRaj/Steam-Stats?style=for-the-badge)
+![GitHub stars](https://img.shields.io/github/stars/SharwinRaj/Steam-Stats-Discord-Widget?style=for-the-badge)
+![License](https://img.shields.io/github/license/SharwinRaj/Steam-Stats-Discord-Widget?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge)
-![GitHub Actions](https://img.shields.io/github/actions/workflow/status/SharwinRaj/Steam-Stats/update.yml?style=for-the-badge)
+![GitHub Actions](https://img.shields.io/github/actions/workflow/status/SharwinRaj/Steam-Stats-Discord-Widget/update.yml?style=for-the-badge)
 
 ---
 
