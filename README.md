@@ -177,13 +177,13 @@ flowchart TD
 ```text
 GET https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/
 
-GET https://api.steampowered.com/IPlayerService/GetSteamLevel/v0001/
+GET https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/
 
 GET https://api.steampowered.com/ISteamUser/GetFriendList/v0001/
 
-GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/
+GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/
 
-GET https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/
+GET https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/
 ```
 
 ### Discord Widget API
