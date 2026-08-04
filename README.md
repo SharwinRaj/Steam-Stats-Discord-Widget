@@ -31,24 +31,25 @@ This project fetches your public Steam profile information from the **Steam Web 
 
 ### ✅ Features
 
-* 🎮 Steam Username
-* 🖼 Profile Avatar
-* ⭐ Steam Level
-* 🎲 Total Owned Games
-* ⏱ Total Playtime
-* 📅 Playtime (Last 2 Weeks)
-* 👥 Friend Count
-* 📆 Steam Member Since
-* 🎯 Recently Played Game
-* ⚡ Fully automated updates via GitHub Actions
+- 🎮 Steam Username
+- 🖼 Profile Avatar
+- ⭐ Steam Level
+- 🎲 Total Owned Games
+- ⏱ Total Playtime
+- 📅 Playtime (Last 2 Weeks)
+- 🕹 Recently Played Game + Icon
+- 👥 Friend Count
+- 📆 Steam Member Since
+- 🔄 Automatic Discord Widget Sync
+- ⚡ Fully automated via GitHub Actions
 
 ### 🏗 Infrastructure
 
-* GitHub Actions
-* Python 3.x
-* Discord Widget API
-* Steam Web API
-* REST API Automation
+- GitHub Actions
+- Python 3.x
+- Discord Widget API
+- Steam Web API
+- REST API Automation
 
 > ✅ No VPS
 > ✅ No server
@@ -92,9 +93,9 @@ https://chloecinders.com/blog/discord-widgets
 
 After creating your widget, copy:
 
-* Discord Application ID
-* Discord Bot Token
-* Discord User ID
+- Discord Application ID
+- Discord Bot Token
+- Discord User ID
 
 ### 3. Obtain a Steam Web API Key
 
@@ -139,17 +140,18 @@ python update_stats.py
 
 Bind these field names in your Discord widget.
 
-| Field                        | Type  | Example            |
-| ---------------------------- | ----- | ------------------ |
-| `steam_user_avatar`          | Image | Profile avatar URL |
-| `steam_username`             | Text  | Sharrr             |
-| `steam_level`                | Text  | 57                 |
-| `steam_number_games`         | Text  | 312                |
-| `steam_total_playtime`       | Text  | 120h               |
-| `steam_total_playtime_2week` | Text  | 8h                 |
-| `steam_member_since`         | Text  | 2017               |
-| `steam_recently_played`      | Text  | THE FINALS         |
-| `steam_friends`              | Text  | 31                 |
+| Field                        | Type  | Example                  |
+| ---------------------------- | ----- | ------------------------ |
+| `steam_user_avatar`          | Image | Profile avatar URL       |
+| `steam_username`             | Text  | Sharrr                   |
+| `steam_level`                | Text  | 57                       |
+| `steam_number_games`         | Text  | 312                      |
+| `steam_total_playtime`       | Text  | 120h                     |
+| `steam_total_playtime_2week` | Text  | 8h                       |
+| `steam_member_since`         | Text  | 2017                     |
+| `steam_recently_played`      | Text  | THE FINALS               |
+| `steam_recent_game_icon`     | Image | Recently played game URL |
+| `steam_friends`              | Text  | 31                       |
 
 ---
 
@@ -243,6 +245,11 @@ PATCH https://discord.com/api/v9/applications/{APP_ID}/users/{USER_ID}/identitie
         "value": "THE FINALS"
       },
       {
+        "type": 3,
+        "name": "steam_recent_game_icon",
+        "value": "https://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg"
+      },
+      {
         "type": 1,
         "name": "steam_friends",
         "value": "31"
@@ -289,10 +296,10 @@ Steam-Stats/
 
 ## Credits
 
-* [Freekillbio/Valorant-stats](https://github.com/Freekillbio/Valorant-stats)
-* [ezxmora/discord-widget](https://github.com/ezxmora/discord-widget)
-* Steam Web API
-* Discord Dynamic Widgets
+- [Freekillbio/Valorant-stats](https://github.com/Freekillbio/Valorant-stats)
+- [ezxmora/discord-widget](https://github.com/ezxmora/discord-widget)
+- Steam Web API
+- Discord Dynamic Widgets
 
 ---
 
@@ -302,8 +309,8 @@ Steam-Stats/
 
 Some Steam profile data only appears if the related privacy setting is set to public:
 
-* Owned games
-* Recently played games
-* Friend list
+- Owned games
+- Recently played games
+- Friend list
 
 If you want to use your Steam API key, you can generate it from Steam’s API key page. For personal use, tools like SteamDB are also useful for looking up your SteamID64.
