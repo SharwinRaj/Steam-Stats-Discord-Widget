@@ -4,9 +4,9 @@
   <img src="https://cdn.cloudflare.steamstatic.com/store/home/store_home_share.jpg" width="700" />
 </div>
 
-> **Real-Time Steam Discord Widget Automation powered by the Steam Web API, Steam Community & GitHub Actions**
+> **Real-Time Steam Discord Widget Automation powered by the Steam Web API & GitHub Actions**
 
-Automatically synchronize your public **Steam** profile statistics with Discord's **Dynamic Profile Widget** using the **Steam Web API**, **Steam Community**, **Python**, and **GitHub Actions**. No VPS, database, or always-on server required.
+Automatically synchronize your public **Steam** profile statistics with Discord's **Dynamic Profile Widget** using the **Steam Web API**, **Python**, and **GitHub Actions**. No VPS, database, or always-on server required.
 
 ---
 
@@ -27,13 +27,9 @@ Automatically synchronize your public **Steam** profile statistics with Discord'
 
 ## ✨ Overview
 
-This project automatically synchronizes your public **Steam** profile with Discord's **Dynamic Profile Widget**.
+This project fetches your public Steam profile information from the **Steam Web API**, converts it into Discord's Dynamic Widget payload format, and automatically updates your Discord profile on a schedule.
 
-It combines the official **Steam Web API** with your public **Steam Community** profile to retrieve accurate account information, total playtime, and your actual most recently played game before converting everything into Discord's Dynamic Widget payload format.
-
----
-
-## ✅ Features
+### ✅ Features
 
 - 🎮 Steam Username
 - 🖼 Profile Avatar
@@ -41,53 +37,45 @@ It combines the official **Steam Web API** with your public **Steam Community** 
 - 🎲 Total Owned Games
 - ⏱ Total Playtime
 - 📅 Playtime (Last 2 Weeks)
-- 🕹 Actual Recently Played Game
-- 🎮 Recently Played Game Icon
+- 🕹 Recently Played Game + Icon
 - 👥 Friend Count
 - 📆 Steam Member Since
-- 🔄 Automatic Discord Widget Synchronization
+- 🔄 Automatic Discord Widget Sync
 - ⚡ Fully automated via GitHub Actions
 
----
-
-## 🏗 Infrastructure
+### 🏗 Infrastructure
 
 - GitHub Actions
 - Python 3.x
-- BeautifulSoup4
-- Steam Web API
-- Steam Community Profile
 - Discord Widget API
+- Steam Web API
 - REST API Automation
 
-> ✅ No VPS  
-> ✅ No server  
-> ✅ No database  
+> ✅ No VPS
+> ✅ No server
+> ✅ No database
 > ✅ Runs entirely on GitHub Actions
 
 ---
 
 ## ⚙️ How It Works
 
-1. GitHub Actions triggers on a schedule or manually.
-2. `update_stats.py` retrieves your Steam account information using the official Steam Web API.
-3. The script reads your public Steam Community profile to determine your actual most recently played game.
-4. The game's App ID is matched against your owned games to retrieve the official Steam game icon.
-5. All information is transformed into a Discord Dynamic Widget payload.
-6. Discord receives a secure PATCH request using your bot token.
-7. Your Discord widget updates automatically.
+1. GitHub Actions triggers on schedule or manually.
+2. `update_stats.py` fetches your Steam profile using the Steam Web API.
+3. The runtime gathers your profile information, Steam level, owned games, recently played games, and friends list.
+4. Everything is transformed into a Discord Dynamic Widget payload.
+5. Discord API receives a secure PATCH request using your bot token.
+6. Your Discord widget updates automatically.
 
 ---
 
-# 🚀 Setup
+## 🚀 Setup
 
-## 1. Fork this repository
+### 1. Fork this repository
 
-Fork this repository and rename it if you wish.
+Fork the repository and rename it if you want.
 
----
-
-## 2. Create a Discord Application
+### 2. Create a Discord Application
 
 > This project requires a Discord application with a Dynamic Profile Widget.
 
@@ -109,23 +97,15 @@ After creating your widget, copy:
 - Discord Bot Token
 - Discord User ID
 
----
+### 3. Obtain a Steam Web API Key
 
-## 3. Obtain a Steam Web API Key
-
-Generate one here:
+Create one here:
 
 https://steamcommunity.com/dev/apikey
 
-When asked for a domain name, you can simply enter:
+You will need to enter a domain name when generating the key. For a personal project, `localhost` is fine.
 
-```
-localhost
-```
-
----
-
-## 4. Add GitHub Secrets
+### 4. Add GitHub Secrets
 
 **Repository → Settings → Secrets and variables → Actions**
 
@@ -137,11 +117,9 @@ localhost
 | `DISCORD_USER_ID`   | Discord User ID        |
 | `DISCORD_APP_ID`    | Discord Application ID |
 
----
+### 5. Run
 
-## 5. Run
-
-Open
+Open:
 
 ```text
 Actions → Update Steam Stats → Run workflow
@@ -149,11 +127,10 @@ Actions → Update Steam Stats → Run workflow
 
 After the first successful run, GitHub automatically updates your widget every 10 minutes.
 
-### Local Development
+**Local development:**
 
 ```bash
-pip install requests beautifulsoup4
-
+pip install requests
 python update_stats.py
 ```
 
@@ -161,20 +138,20 @@ python update_stats.py
 
 ## 🧩 Widget Fields
 
-Bind these field names inside your Discord Dynamic Widget.
+Bind these field names in your Discord widget.
 
-| Field                        | Type  | Example        |
-| ---------------------------- | ----- | -------------- |
-| `steam_user_avatar`          | Image | Profile Avatar |
-| `steam_username`             | Text  | Sharrr         |
-| `steam_level`                | Text  | 57             |
-| `steam_number_games`         | Text  | 312            |
-| `steam_total_playtime`       | Text  | 120h           |
-| `steam_total_playtime_2week` | Text  | 8h             |
-| `steam_member_since`         | Text  | 2018           |
-| `steam_recently_played`      | Text  | THE FINALS     |
-| `steam_recent_game_icon`     | Image | Game Icon      |
-| `steam_friends`              | Text  | 31             |
+| Field                        | Type  | Example                       |
+| ---------------------------- | ----- | ----------------------------- |
+| `steam_user_avatar`          | Image | Profile avatar URL            |
+| `steam_username`             | Text  | Sharrr                        |
+| `steam_level`                | Text  | 57                            |
+| `steam_number_games`         | Text  | 312                           |
+| `steam_total_playtime`       | Text  | 120h                          |
+| `steam_total_playtime_2week` | Text  | 8h                            |
+| `steam_member_since`         | Text  | 2017                          |
+| `steam_recently_played`      | Text  | THE FINALS                    |
+| `steam_recent_game_icon`     | Image | Recently played game icon URL |
+| `steam_friends`              | Text  | 31                            |
 
 ---
 
@@ -183,16 +160,12 @@ Bind these field names inside your Discord Dynamic Widget.
 ```mermaid
 flowchart TD
     A[GitHub Scheduler] --> B[update_stats.py]
-
     B --> C[Steam Web API]
-    B --> D[Steam Community Profile]
-
-    C --> E[Account Data]
-    D --> F[Recent Activity]
-
-    E --> G[Build Discord Payload]
+    C --> D[Steam Profile Data]
+    B --> E[GitHub Secrets]
+    E --> F[Discord Authentication]
+    D --> G[Build Discord Payload]
     F --> G
-
     G --> H[PATCH Discord API]
     H --> I[Discord Widget]
 ```
@@ -214,14 +187,6 @@ GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/
 
 GET https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/
 ```
-
-### Steam Community Profile
-
-```text
-GET https://steamcommunity.com/profiles/{STEAMID64}
-```
-
-Used to retrieve the user's **actual most recently played game**.
 
 ### Discord Widget API
 
@@ -257,17 +222,17 @@ PATCH https://discord.com/api/v9/applications/{APP_ID}/users/{USER_ID}/identitie
       {
         "type": 1,
         "name": "steam_number_games",
-        "value": "312"
+        "value": "62"
       },
       {
         "type": 1,
         "name": "steam_total_playtime",
-        "value": "120h"
+        "value": "469h"
       },
       {
         "type": 1,
         "name": "steam_total_playtime_2week",
-        "value": "8h"
+        "value": "18h"
       },
       {
         "type": 1,
@@ -282,9 +247,7 @@ PATCH https://discord.com/api/v9/applications/{APP_ID}/users/{USER_ID}/identitie
       {
         "type": 3,
         "name": "steam_recent_game_icon",
-        "value": {
-          "url": "https://media.steampowered.com/steamcommunity/public/images/apps/2073850/9532db560dca3b4982f4af3f5981b6b2ce2a6909.jpg"
-        }
+        "value": "https://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg"
       },
       {
         "type": 1,
@@ -300,13 +263,13 @@ PATCH https://discord.com/api/v9/applications/{APP_ID}/users/{USER_ID}/identitie
 
 ## 🤖 GitHub Actions
 
-Workflow
+Workflow:
 
 ```text
 .github/workflows/update.yml
 ```
 
-Schedule
+Schedule:
 
 ```yaml
 schedule:
@@ -320,7 +283,7 @@ Manual execution is also supported from the **Actions** tab.
 ## 📂 Project Structure
 
 ```text
-Steam-Stats-Discord-Widget/
+Steam-Stats/
 ├── update_stats.py
 ├── preview.png
 ├── README.md
@@ -331,39 +294,23 @@ Steam-Stats-Discord-Widget/
 
 ---
 
-## 📝 Notes
-
-Some Steam information is only available when the corresponding privacy settings are set to **Public**, including:
-
-- Owned Games
-- Recently Played Games
-- Friend List
-
-This project combines the official Steam Web API with your public Steam Community profile to retrieve the most accurate information available.
-
-To generate a Steam Web API key:
-
-https://steamcommunity.com/dev/apikey
-
-To find your SteamID64:
-
-https://steamdb.info/calculator/
-
----
-
 ## Credits
 
-This project was inspired by and builds upon ideas from:
-
-- https://github.com/Freekillbio/Valorant-stats
-- https://github.com/ezxmora/discord-widget
-
-Additional services used:
-
+- [Freekillbio/Valorant-stats](https://github.com/Freekillbio/Valorant-stats)
+- [ezxmora/discord-widget](https://github.com/ezxmora/discord-widget)
 - Steam Web API
-- Steam Community
 - Discord Dynamic Widgets
 
 ---
 
-> This project is not affiliated with Valve Corporation or Discord Inc.
+> This project is not affiliated with Valve or Discord.
+
+### Notes
+
+Some Steam profile data only appears if the related privacy setting is set to public:
+
+- Owned games
+- Recently played games
+- Friend list
+
+If you want to use your Steam API key, you can generate it from Steam’s API key page. For personal use, tools like SteamDB are also useful for looking up your SteamID64.
