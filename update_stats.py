@@ -1,5 +1,6 @@
 import os
 import requests
+from bs4 import BeautifulSoup
 import logging
 from datetime import datetime
 
@@ -15,7 +16,53 @@ CONFIG = {
     "DISCORD_APP_ID": os.environ.get("DISCORD_APP_ID"),
 }
 
+def fetch_recent_activity(steamid):
+    url = f"https://steamcommunity.com/profiles/{steamid}"
 
+    try:
+        response = requests.get(
+            url,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 Chrome/138.0 Safari/537.36"
+                )
+            },
+            timeout=10,
+        )
+
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        recent = soup.select_one(".recent_game")
+
+        if not recent:
+            logger.warning("No recent activity found.")
+            return None
+
+        game_name = recent.select_one(".game_name").get_text(strip=True)
+
+        store_link = recent.select_one(".game_name a")
+
+        appid = None
+
+        if store_link:
+            try:
+                appid = int(store_link["href"].rstrip("/").split("/")[-1])
+            except (ValueError, IndexError):
+                logger.warning("Failed to parse App ID from Steam profile.")
+
+        return {
+            "game": game_name,
+            "appid": appid
+        }
+
+    except Exception as e:
+        logger.error(f"Recent activity scrape failed: {e}")
+        return None
+    
+    
 def update_discord_widget():
     base_url = "https://api.steampowered.com"
     key = CONFIG["STEAM_API_KEY"]
@@ -27,6 +74,7 @@ def update_discord_widget():
             f"{base_url}/ISteamUser/GetPlayerSummaries/v0002/?steamids={steamid}&key={key}",
             timeout=10,
         )
+        user_resp.raise_for_status()
         user = user_resp.json()["response"]["players"][0]
 
         # Steam Level
@@ -34,6 +82,7 @@ def update_discord_widget():
             f"{base_url}/IPlayerService/GetSteamLevel/v1/?steamid={steamid}&key={key}",
             timeout=10,
         )
+        level_resp.raise_for_status()
         level = str(level_resp.json()["response"]["player_level"])
 
         # Owned Games
@@ -41,20 +90,26 @@ def update_discord_widget():
             f"{base_url}/IPlayerService/GetOwnedGames/v1/?steamid={steamid}&include_appinfo=1&include_played_free_games=1&key={key}",
             timeout=10,
         )
+        games_resp.raise_for_status()
         games = games_resp.json()["response"]
-
-        # Recently Played
+        
+        # Recently Played (only used for 2-week playtime)
         recent_resp = requests.get(
             f"{base_url}/IPlayerService/GetRecentlyPlayedGames/v1/?steamid={steamid}&key={key}",
             timeout=10,
         )
+        recent_resp.raise_for_status()
         recent = recent_resp.json()["response"]
-
+        
+        #Recent Activity
+        recent_activity = fetch_recent_activity(steamid)
+        
         # Friends
         friends_resp = requests.get(
             f"{base_url}/ISteamUser/GetFriendList/v1/?steamid={steamid}&relationship=friend&key={key}",
             timeout=10,
         )
+        friends_resp.raise_for_status()
         friends = friends_resp.json()
 
     except Exception as e:
@@ -71,21 +126,30 @@ def update_discord_widget():
         for game in recent.get("games", [])
     )
 
-    recent_games = recent.get("games", [])
+    recent_game = "None"
+    recent_game_icon = ""
 
-    recent_game = (
-        recent_games[0]["name"]
-        if recent_games
-        else "None"
-    )
-    
-    recent_game_icon = (
-        f"https://media.steampowered.com/steamcommunity/public/images/apps/"
-        f"{recent_games[0]['appid']}/"
-        f"{recent_games[0]['img_icon_url']}.jpg"
-        if recent_games
-        else ""
-    )
+    if recent_activity:
+        recent_game = recent_activity["game"]
+
+        appid = recent_activity["appid"]
+
+        matched_game = next(
+            (
+                game
+                for game in games.get("games", [])
+                if game["appid"] == appid
+            ),
+            None,
+        )
+
+        if matched_game and matched_game.get("img_icon_url"):
+            recent_game_icon = (
+                "https://media.steampowered.com/"
+                "steamcommunity/public/images/apps/"
+                f"{appid}/"
+                f"{matched_game['img_icon_url']}.jpg"
+            )
 
     vanity = user["profileurl"].rstrip("/").split("/")[-1]
 

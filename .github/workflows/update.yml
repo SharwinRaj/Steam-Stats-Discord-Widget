@@ -2,7 +2,7 @@ name: Update Steam Stats
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Runs every 10 minutes
+    - cron: "*/5 * * * *" # Runs every 5 minutes;
   workflow_dispatch: # Allows manual trigger from Actions tab
 
 jobs:
@@ -16,10 +16,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install -r requirements.txt
 
       - name: Execute Update Script
         env:
