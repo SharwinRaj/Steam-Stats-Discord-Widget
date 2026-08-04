@@ -140,18 +140,18 @@ python update_stats.py
 
 Bind these field names in your Discord widget.
 
-| Field                        | Type  | Example                  |
-| ---------------------------- | ----- | ------------------------ |
-| `steam_user_avatar`          | Image | Profile avatar URL       |
-| `steam_username`             | Text  | Sharrr                   |
-| `steam_level`                | Text  | 57                       |
-| `steam_number_games`         | Text  | 312                      |
-| `steam_total_playtime`       | Text  | 120h                     |
-| `steam_total_playtime_2week` | Text  | 8h                       |
-| `steam_member_since`         | Text  | 2017                     |
-| `steam_recently_played`      | Text  | THE FINALS               |
-| `steam_recent_game_icon`     | Image | Recently played game URL |
-| `steam_friends`              | Text  | 31                       |
+| Field                        | Type  | Example                       |
+| ---------------------------- | ----- | ----------------------------- |
+| `steam_user_avatar`          | Image | Profile avatar URL            |
+| `steam_username`             | Text  | Sharrr                        |
+| `steam_level`                | Text  | 57                            |
+| `steam_number_games`         | Text  | 312                           |
+| `steam_total_playtime`       | Text  | 120h                          |
+| `steam_total_playtime_2week` | Text  | 8h                            |
+| `steam_member_since`         | Text  | 2017                          |
+| `steam_recently_played`      | Text  | THE FINALS                    |
+| `steam_recent_game_icon`     | Image | Recently played game icon URL |
+| `steam_friends`              | Text  | 31                            |
 
 ---
 
