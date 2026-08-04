@@ -78,6 +78,14 @@ def update_discord_widget():
         if recent_games
         else "None"
     )
+    
+    recent_game_icon = (
+        f"https://media.steampowered.com/steamcommunity/public/images/apps/"
+        f"{recent_games[0]['appid']}/"
+        f"{recent_games[0]['img_icon_url']}.jpg"
+        if recent_games
+        else ""
+    )
 
     vanity = user["profileurl"].rstrip("/").split("/")[-1]
 
@@ -138,6 +146,13 @@ def update_discord_widget():
                     "type": 1,
                     "name": "steam_recently_played",
                     "value": recent_game
+                },
+                {
+                    "type": 3,
+                    "name": "steam_recent_game_icon",
+                    "value": {
+                        "url": recent_game_icon
+                    }
                 },
                 {
                     "type": 1,
