@@ -34,6 +34,7 @@ This project fetches your public Steam profile information from the **Steam Web 
 - 🎮 Steam Username
 - 🖼 Profile Avatar
 - ⭐ Steam Level
+- 🟢 Steam Online Status
 - 🎲 Total Owned Games
 - ⏱ Total Playtime
 - 📅 Playtime (Last 2 Weeks)
@@ -64,7 +65,7 @@ This project fetches your public Steam profile information from the **Steam Web 
 
 1. GitHub Actions triggers on schedule or manually.
 2. `update_stats.py` fetches your public Steam profile using the Steam Web API.
-3. Steam profile information, level, owned games, playtime, and friends are retrieved.
+3. Steam profile information, online status, level, owned games, playtime, and friends are retrieved.
 4. The most recently played game is determined using the highest `rtime_last_played` value from the owned games list.
 5. The most played game is determined using the highest `playtime_forever` value.
 6. Game icons are generated using the Steam App ID and `img_icon_url`.
@@ -160,6 +161,7 @@ Bind these field names in your Discord widget.
 | ---------------------------- | ----- | ------------------------- |
 | `steam_user_avatar`          | Image | Profile avatar URL        |
 | `steam_username`             | Text  | Sharrr                    |
+| `steam_status`               | Text  | Online                    |
 | `steam_user_id`              | Text  | Sharwcool                 |
 | `steam_level`                | Text  | 57                        |
 | `steam_number_games`         | Text  | 62                        |
@@ -283,7 +285,7 @@ flowchart TD
 
 #### Player Summary
 
-Used for the Steam username, avatar, profile URL, and account creation time.
+Used for the Steam username, avatar, profile URL, online status, and account creation time.
 
 ```text
 GET https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/

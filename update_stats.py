@@ -29,6 +29,21 @@ def update_discord_widget():
         )
         user = user_resp.json()["response"]["players"][0]
 
+        persona_states = {
+            0: "Offline ⚫",
+            1: "Online 🟢",
+            2: "Busy 🔴",
+            3: "Away 🟡",
+            4: "Snooze 🌙",
+            5: "Looking to Trade 🔵",
+            6: "Looking to Play 🎮"
+        }
+
+        steam_status = persona_states.get(
+            user.get("personastate", 0),
+            "Unknown"
+        )
+
         # Steam Level
         level_resp = requests.get(
             f"{base_url}/IPlayerService/GetSteamLevel/v1/?steamid={steamid}&key={key}",
@@ -133,6 +148,11 @@ def update_discord_widget():
             "type": 1,
             "name": "steam_username",
             "value": user["personaname"]
+        },
+        {
+            "type": 1,
+            "name": "steam_status",
+            "value": steam_status
         },
         {
             "type": 1,
