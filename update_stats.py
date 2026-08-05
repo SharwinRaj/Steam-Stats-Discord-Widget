@@ -64,33 +64,28 @@ def update_discord_widget():
         for game in games.get("games", [])
     )
 
-    current_game = user.get("gameextrainfo")
-    current_appid = user.get("gameid")
+    owned_games = games.get("games", [])
 
-    recent_game = current_game or "Not Playing"
+    last_game = max(
+        owned_games,
+        key=lambda game: game.get("rtime_last_played", 0),
+        default=None
+    )
+
+    recent_game = "Not Available"
     recent_game_icon = ""
 
-    if current_game and current_appid:
-        try:
-            current_appid = int(current_appid)
-        except (TypeError, ValueError):
-            current_appid = None
+    if last_game:
+        recent_game = last_game["name"]
+        appid = last_game["appid"]
+        icon_hash = last_game.get("img_icon_url")
 
-        matched_game = next(
-            (
-                game
-                for game in games.get("games", [])
-                if game["appid"] == current_appid
-            ),
-            None,
-        )
-
-        if matched_game and matched_game.get("img_icon_url"):
+        if icon_hash:
             recent_game_icon = (
                 "https://media.steampowered.com/"
                 "steamcommunity/public/images/apps/"
-                f"{current_appid}/"
-                f"{matched_game['img_icon_url']}.jpg"
+                f"{appid}/"
+                f"{icon_hash}.jpg"
             )
 
     vanity = user["profileurl"].rstrip("/").split("/")[-1]
@@ -153,21 +148,20 @@ def update_discord_widget():
         }
     ]
 
-    if recent_game_icon:
-        dynamic.extend([
-            {
-                "type": 3,
-                "name": "steam_recent_game_icon",
-                "value": {
-                    "url": recent_game_icon
-                }
-            },
-            {
-                "type": 1,
-                "name": "steam_recently_played",
-                "value": recent_game
+    dynamic.extend([
+        {
+            "type": 3,
+            "name": "steam_recent_game_icon",
+            "value": {
+                "url": recent_game_icon
             }
-        ])
+        },
+        {
+            "type": 1,
+            "name": "steam_recently_played",
+            "value": recent_game
+        }
+    ])
         
     payload = {
         "data": {
