@@ -80,13 +80,36 @@ def update_discord_widget():
         appid = last_game["appid"]
         icon_hash = last_game.get("img_icon_url")
 
-        if icon_hash:
-            recent_game_icon = (
-                "https://media.steampowered.com/"
-                "steamcommunity/public/images/apps/"
-                f"{appid}/"
-                f"{icon_hash}.jpg"
-            )
+        recent_game_icon = (
+            "https://media.steampowered.com/"
+            "steamcommunity/public/images/apps/"
+            f"{appid}/"
+            f"{icon_hash}.jpg"
+        )
+
+    most_played_game = max(
+        owned_games,
+        key=lambda game: game.get("playtime_forever", 0),
+        default=None
+    )
+
+    most_played_game_name = "Not Available"
+    most_played_hours = "0h"
+    most_played_icon = ""
+
+    if most_played_game:
+        most_played_game_name = most_played_game["name"]
+        most_played_hours = f"{most_played_game['playtime_forever'] // 60}h"
+
+        most_played_appid = most_played_game["appid"]
+        most_played_icon_hash = most_played_game["img_icon_url"]
+
+        most_played_icon = (
+            "https://media.steampowered.com/"
+            "steamcommunity/public/images/apps/"
+            f"{most_played_appid}/"
+            f"{most_played_icon_hash}.jpg"
+        )  
 
     vanity = user["profileurl"].rstrip("/").split("/")[-1]
 
@@ -145,10 +168,7 @@ def update_discord_widget():
             "type": 1,
             "name": "steam_friends",
             "value": str(friend_count)
-        }
-    ]
-
-    dynamic.extend([
+        },
         {
             "type": 3,
             "name": "steam_recent_game_icon",
@@ -160,8 +180,26 @@ def update_discord_widget():
             "type": 1,
             "name": "steam_recently_played",
             "value": recent_game
+        },
+        {
+            "type": 1,
+            "name": "steam_most_played_game",
+            "value": most_played_game_name
+        },
+        {
+            "type": 1,
+            "name": "steam_most_played_hours",
+            "value": most_played_hours
+        },
+        {
+            "type": 3,
+            "name": "steam_most_played_icon",
+            "value": {
+                "url": most_played_icon
+            }
         }
-    ])
+    ]
+
         
     payload = {
         "data": {
